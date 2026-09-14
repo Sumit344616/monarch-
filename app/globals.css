@@ -1,1 +1,380 @@
 @import "tailwindcss";
+
+/* ==========================================================================
+   MONARCH — LUXURY MENSWEAR DESIGN SYSTEM
+   "BUILT FOR PRESENCE."
+   ========================================================================== */
+
+:root {
+  /* Core Luxury Palette */
+  --color-ivory: #F3F0E8;
+  --color-ivory-tint: #FAF8F4;
+  --color-ivory-dark: #E4DFD3;
+  --color-black: #0B0B0A;
+  --color-charcoal: #181817;
+  --color-charcoal-light: #262624;
+  --color-stone: #B8B2A7;
+  --color-stone-dark: #8E887E;
+  --color-forest: #1D2A24;
+  --color-forest-dark: #121C17;
+  --color-gold: #A58A55;
+  --color-gold-light: #C9B07E;
+  --color-burgundy: #381E24;
+
+  /* Semantic UI Tokens */
+  --bg-primary: var(--color-ivory);
+  --text-primary: var(--color-black);
+  --text-muted: var(--color-stone-dark);
+  --border-subtle: rgba(11, 11, 10, 0.12);
+  --border-gold: rgba(165, 138, 85, 0.35);
+
+  /* Fluid Editorial Typography */
+  --font-serif: "Cinzel", "Bodoni Moda", "Playfair Display", Georgia, serif;
+  --font-serif-editorial: "Playfair Display", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Typography Scales */
+  --text-hero: clamp(3.2rem, 9vw, 9.5rem);
+  --text-display: clamp(2.4rem, 6.5vw, 6.2rem);
+  --text-h1: clamp(2rem, 4.5vw, 4.2rem);
+  --text-h2: clamp(1.6rem, 3.2vw, 3rem);
+  --text-h3: clamp(1.2rem, 2.2vw, 2rem);
+  --text-body: clamp(0.95rem, 1.15vw, 1.125rem);
+  --text-meta: clamp(0.7rem, 0.85vw, 0.825rem);
+  --text-nano: 0.65rem;
+
+  /* Transitions & Easing */
+  --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-sharp: cubic-bezier(0.25, 1, 0.5, 1);
+  --duration-fast: 0.3s;
+  --duration-normal: 0.6s;
+  --duration-slow: 1.2s;
+
+  /* Layout Spacing */
+  --container-max: 1540px;
+  --container-wide: 1800px;
+  --section-pad-y: clamp(5rem, 10vw, 12rem);
+  --section-pad-x: clamp(1.25rem, 4vw, 4.5rem);
+}
+
+/* Base Reset & Box Sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--color-black);
+  color: var(--color-ivory);
+  scroll-behavior: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-black);
+  color: var(--color-ivory);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Links & Buttons */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-luxury), color var(--duration-fast) var(--ease-luxury);
+}
+
+button {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Next.js Image Protection — do NOT override position:absolute fill images */
+img:not([style*="position: absolute"]) {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Subtle Film Grain Texture Overlay */
+.film-grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9990;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Editorial Typography Utilities */
+.font-serif {
+  font-family: var(--font-serif);
+  letter-spacing: 0.04em;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.font-editorial {
+  font-family: var(--font-serif-editorial);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.text-hero {
+  font-size: var(--text-hero);
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  font-family: var(--font-serif);
+}
+
+.text-display {
+  font-size: var(--text-display);
+  line-height: 0.98;
+  letter-spacing: 0.02em;
+  font-family: var(--font-serif);
+}
+
+.text-meta {
+  font-size: var(--text-meta);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+
+.text-gold {
+  color: var(--color-gold);
+}
+
+.text-ivory {
+  color: var(--color-ivory);
+}
+
+.text-black {
+  color: var(--color-black);
+}
+
+.text-stone {
+  color: var(--color-stone);
+}
+
+/* Alternating Theme Classes */
+.theme-ivory {
+  background-color: var(--color-ivory);
+  color: var(--color-black);
+  --border-subtle: rgba(11, 11, 10, 0.12);
+  --text-muted: #6B655A;
+}
+
+.theme-black {
+  background-color: var(--color-black);
+  color: var(--color-ivory);
+  --border-subtle: rgba(243, 240, 232, 0.12);
+  --text-muted: var(--color-stone);
+}
+
+.theme-charcoal {
+  background-color: var(--color-charcoal);
+  color: var(--color-ivory);
+  --border-subtle: rgba(243, 240, 232, 0.12);
+  --text-muted: var(--color-stone);
+}
+
+.theme-stone {
+  background-color: #C8C2B7;
+  color: var(--color-black);
+  --border-subtle: rgba(11, 11, 10, 0.15);
+  --text-muted: #4A463F;
+}
+
+.theme-forest {
+  background-color: var(--color-forest);
+  color: var(--color-ivory);
+  --border-subtle: rgba(243, 240, 232, 0.14);
+  --text-muted: #A8B5AF;
+}
+
+/* Layout Container */
+.container-custom {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--section-pad-x);
+  padding-right: var(--section-pad-x);
+}
+
+.container-wide {
+  width: 100%;
+  max-width: var(--container-wide);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--section-pad-x);
+  padding-right: var(--section-pad-x);
+}
+
+/* Thin Divider Rule */
+.divider-line {
+  width: 100%;
+  height: 1px;
+  background-color: var(--border-subtle);
+}
+
+.divider-gold {
+  width: 100%;
+  height: 1px;
+  background-color: var(--border-gold);
+}
+
+/* Luxury Interactive CTA Button */
+.btn-luxury {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.1rem 2.4rem;
+  font-family: var(--font-sans);
+  font-size: var(--text-meta);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--duration-normal) var(--ease-luxury);
+  border: 1px solid currentColor;
+}
+
+.btn-luxury::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: currentColor;
+  transform: translateY(100%);
+  transition: transform var(--duration-normal) var(--ease-luxury);
+  z-index: 0;
+}
+
+.btn-luxury span {
+  position: relative;
+  z-index: 1;
+  transition: color var(--duration-fast) var(--ease-luxury);
+}
+
+.btn-luxury:hover::before {
+  transform: translateY(0);
+}
+
+.btn-luxury-light:hover span {
+  color: var(--color-black);
+}
+
+.btn-luxury-dark:hover span {
+  color: var(--color-ivory);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-charcoal-light);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
+
+/* Robust Explicit Layout Containers for Hero and Frames */
+.hero-stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 650px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #0B0B0A;
+}
+
+.hero-frame-main {
+  position: relative;
+  width: clamp(340px, 48vw, 760px);
+  height: clamp(520px, 85vh, 880px);
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+}
+
+.hero-frame-look2 {
+  position: relative;
+  width: clamp(320px, 44vw, 680px);
+  height: clamp(480px, 80vh, 820px);
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+}
+
+.hero-frame-emblem {
+  position: relative;
+  width: clamp(300px, 38vw, 580px);
+  height: clamp(440px, 76vh, 780px);
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(165, 138, 85, 0.35);
+}
+
+/* Explicit aspect ratios across all editorial sections */
+.collection-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  max-height: 780px;
+  overflow: hidden;
+}
+
+.shirt-img {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 720px;
+  overflow: hidden;
+}
+
+.checks-main-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 760px;
+  overflow: hidden;
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
