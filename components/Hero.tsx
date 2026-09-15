@@ -51,11 +51,11 @@ export function Hero() {
       // ===============================================================
       const entryTl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
-      // 1. Season metadata slides in from left with tracking expansion
+      // 1. Season metadata slides in from left
       entryTl.fromTo(
         metaSeasonRef.current,
-        { x: -30, opacity: 0, letterSpacing: "0.38em" },
-        { x: 0, opacity: 1, letterSpacing: "0.28em", duration: 1.2 },
+        { x: -25, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1.2 },
         0.1
       );
 
@@ -82,13 +82,18 @@ export function Hero() {
         0.6
       );
 
-      // 4. Description paragraph soft blur-to-sharp rise
-      entryTl.fromTo(
-        descParaRef.current,
-        { y: 22, opacity: 0, filter: "blur(6px)" },
-        { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.2 },
-        0.75
-      );
+      // 4. Description paragraph: Word-by-Word typing reveal
+      if (descParaRef.current) {
+        const words = descParaRef.current.querySelectorAll(".act1-word");
+        if (words.length > 0) {
+          entryTl.fromTo(
+            words,
+            { yPercent: 110, opacity: 0, filter: "blur(4px)" },
+            { yPercent: 0, opacity: 1, filter: "blur(0px)", stagger: 0.035, duration: 0.65, ease: "power3.out" },
+            0.75
+          );
+        }
+      }
 
       // 5. Bottom navigation bar slides up
       entryTl.fromTo(
@@ -123,15 +128,35 @@ export function Hero() {
               progressLineRef.current.style.width = `${Math.round(self.progress * 100)}%`;
             }
           },
+          onLeaveBack: () => {
+            // Guarantee full visibility when returning to the very top
+            if (imageMainRef.current) gsap.set(imageMainRef.current, { opacity: 1, scale: 1, xPercent: 0 });
+            if (textBuildRef.current) {
+              gsap.set(textBuildRef.current, { opacity: 1, yPercent: 0 });
+              const act1Words = textBuildRef.current.querySelectorAll(".act1-word");
+              if (act1Words.length > 0) gsap.set(act1Words, { opacity: 1, yPercent: 0, filter: "blur(0px)" });
+              if (titleLine1Ref.current) gsap.set(titleLine1Ref.current, { opacity: 1, yPercent: 0, filter: "blur(0px)" });
+              if (titleLine2Ref.current) gsap.set(titleLine2Ref.current, { opacity: 1, yPercent: 0, filter: "blur(0px)" });
+              if (titleLine3Ref.current) gsap.set(titleLine3Ref.current, { opacity: 1, yPercent: 0, filter: "blur(0px)" });
+            }
+            if (ctaBarRef.current) gsap.set(ctaBarRef.current, { opacity: 1, yPercent: 0 });
+          },
         },
       });
 
       // ---------------------------------------------------------------
       // SCENE 01 -> SCENE 02: CAMERA PUSH-IN ON OPENING
+      // Explicitly lock opacity: 1 at progress: 0 so scrolling up restores visibility
       // ---------------------------------------------------------------
-      scrollTl.to(
+      scrollTl.fromTo(
         imageMainRef.current,
         {
+          opacity: 1,
+          scale: 1,
+          xPercent: 0,
+        },
+        {
+          opacity: 1,
           scale: 1.08,
           xPercent: isMobile ? -2 : -3,
           ease: "none",
@@ -140,12 +165,32 @@ export function Hero() {
         0
       );
 
-      scrollTl.to(
+      scrollTl.fromTo(
         textBuildRef.current,
         {
+          opacity: 1,
+          yPercent: 0,
+        },
+        {
+          opacity: 1,
           yPercent: -10,
           ease: "none",
           duration: 2.0,
+        },
+        0
+      );
+
+      scrollTl.fromTo(
+        ctaBarRef.current,
+        {
+          opacity: 1,
+          yPercent: 0,
+        },
+        {
+          opacity: 1,
+          yPercent: 0,
+          ease: "none",
+          duration: 1.8,
         },
         0
       );
@@ -221,23 +266,27 @@ export function Hero() {
         2.4
       );
 
-      // Kinetic Typography "CRAFTED IN DETAIL" reveals in center
-      scrollTl.fromTo(
-        act2TextRef.current,
-        {
-          y: 20,
-          opacity: 0,
-          filter: "blur(6px)",
-        },
-        {
-          y: 0,
-          opacity: 1,
-          filter: "blur(0px)",
-          duration: 1.6,
-          ease: "power2.out",
-        },
-        2.3
-      );
+      // Kinetic Word-by-Word Typography for "CRAFTED IN DETAIL"
+      if (act2TextRef.current) {
+        const sub = act2TextRef.current.querySelector(".act2-sub");
+        const words = act2TextRef.current.querySelectorAll(".act2-word");
+        if (sub) {
+          scrollTl.fromTo(
+            sub,
+            { y: 15, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.9, ease: "power2.out" },
+            2.2
+          );
+        }
+        if (words.length > 0) {
+          scrollTl.fromTo(
+            words,
+            { yPercent: 120, opacity: 0, filter: "blur(6px)" },
+            { yPercent: 0, opacity: 1, filter: "blur(0px)", stagger: 0.14, duration: 1.2, ease: "power3.out" },
+            2.3
+          );
+        }
+      }
 
       // ---------------------------------------------------------------
       // SCENE 03 -> SCENE 04: TRANSITION TO THIRD SILHOUETTE (IVORY CASHMERE)
@@ -271,22 +320,43 @@ export function Hero() {
         5.2
       );
 
-      scrollTl.fromTo(
-        textFormRef.current,
-        {
-          xPercent: -25,
-          opacity: 0,
-          filter: "blur(6px)",
-        },
-        {
-          xPercent: 0,
-          opacity: 1,
-          filter: "blur(0px)",
-          duration: 1.6,
-          ease: "power3.out",
-        },
-        5.4
-      );
+      // Kinetic Word-by-Word Typography for "FORM. FIT. CHARACTER."
+      if (textFormRef.current) {
+        scrollTl.fromTo(
+          textFormRef.current,
+          { opacity: 0, xPercent: -15 },
+          { opacity: 1, xPercent: 0, duration: 1.2, ease: "power3.out" },
+          5.2
+        );
+
+        const tag = textFormRef.current.querySelector(".act3-tag");
+        const titleWords = textFormRef.current.querySelectorAll(".act3-word");
+        const paraWords = textFormRef.current.querySelectorAll(".act3-para-word");
+        const footer = textFormRef.current.querySelector(".act3-footer");
+
+        if (tag) {
+          scrollTl.fromTo(tag, { x: -20, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, 5.2);
+        }
+        if (titleWords.length > 0) {
+          scrollTl.fromTo(
+            titleWords,
+            { yPercent: 120, opacity: 0, filter: "blur(6px)" },
+            { yPercent: 0, opacity: 1, filter: "blur(0px)", stagger: 0.15, duration: 1.1, ease: "power3.out" },
+            5.3
+          );
+        }
+        if (paraWords.length > 0) {
+          scrollTl.fromTo(
+            paraWords,
+            { yPercent: 110, opacity: 0, filter: "blur(4px)" },
+            { yPercent: 0, opacity: 1, filter: "blur(0px)", stagger: 0.03, duration: 0.7, ease: "power3.out" },
+            5.6
+          );
+        }
+        if (footer) {
+          scrollTl.fromTo(footer, { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: "power2.out" }, 6.0);
+        }
+      }
 
       // ---------------------------------------------------------------
       // SCENE 04 -> SCENE 05: LOGO CREST REVEAL IN OBSIDIAN VOID
@@ -434,49 +504,52 @@ export function Hero() {
         }}
       >
         <div style={{ maxWidth: "680px", paddingTop: "2.5rem", paddingBottom: "5rem" }}>
-          {/* 1. Animated Season Tag */}
+          {/* 1. Animated Season & Atelier Tag — Guaranteed Single-Line Luxury Badge */}
           <div
             ref={metaSeasonRef}
             style={{
-              display: "flex",
+              display: "inline-flex",
               alignItems: "center",
-              gap: "0.85rem",
-              marginBottom: "1.5rem",
+              gap: "0.75rem",
+              marginBottom: "1.75rem",
               opacity: 0,
+              flexWrap: "nowrap",
+              whiteSpace: "nowrap",
             }}
           >
             <span
               style={{
-                width: 7,
-                height: 7,
+                width: 6,
+                height: 6,
                 borderRadius: "50%",
                 backgroundColor: "#A58A55",
+                flexShrink: 0,
               }}
               className="animate-pulse"
             />
             <span
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: "var(--text-meta)",
-                letterSpacing: "0.28em",
+                fontSize: "0.72rem",
+                letterSpacing: "0.26em",
                 color: "#A58A55",
                 fontWeight: 600,
                 textTransform: "uppercase",
               }}
             >
-              {brandData.season} • {brandData.established}
+              SPRING / SUMMER 2026
             </span>
+            <span style={{ color: "rgba(243, 240, 232, 0.25)", fontSize: "0.75rem" }}>—</span>
             <span
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: "var(--text-meta)",
+                fontSize: "0.72rem",
                 letterSpacing: "0.22em",
                 color: "#8E887E",
                 textTransform: "uppercase",
               }}
-              className="hidden sm:inline"
             >
-              // {brandData.descriptor}
+              HAUTE MENSWEAR
             </span>
           </div>
 
@@ -532,7 +605,7 @@ export function Hero() {
             }}
           />
 
-          {/* 4. Description Paragraph */}
+          {/* 4. Description Paragraph with Word-by-Word Typing Reveal */}
           <p
             ref={descParaRef}
             style={{
@@ -543,11 +616,32 @@ export function Hero() {
               fontWeight: 300,
               maxWidth: "480px",
               margin: 0,
-              opacity: 0,
-              willChange: "transform",
             }}
           >
-            Engineered with architectural discipline and rare Italian fibers. For the man who commands quiet authority.
+            {"Engineered with architectural discipline and rare Italian fibers. For the man who commands quiet authority."
+              .split(" ")
+              .map((word, i) => (
+                <span
+                  key={i}
+                  style={{
+                    display: "inline-block",
+                    overflow: "hidden",
+                    marginRight: "0.28em",
+                    verticalAlign: "bottom",
+                  }}
+                >
+                  <span
+                    className="act1-word"
+                    style={{
+                      display: "inline-block",
+                      willChange: "transform, opacity, filter",
+                      opacity: 0,
+                    }}
+                  >
+                    {word}
+                  </span>
+                </span>
+              ))}
           </p>
         </div>
       </div>
@@ -692,20 +786,19 @@ export function Hero() {
           <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(11, 11, 10, 0.88)" }} />
         </div>
 
-        {/* Central Diptych Headline */}
+        {/* Central Diptych Headline with Word-by-Word Typing Reveal */}
         <div
           ref={act2TextRef}
           style={{
             position: "relative",
             textAlign: "center",
             marginBottom: "2rem",
-            opacity: 0,
             zIndex: 30,
             pointerEvents: "none",
-            willChange: "transform",
           }}
         >
           <div
+            className="act2-sub"
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: "var(--text-meta)",
@@ -714,6 +807,7 @@ export function Hero() {
               textTransform: "uppercase",
               fontWeight: 500,
               marginBottom: "0.4rem",
+              opacity: 0,
             }}
           >
             EDITORIAL ARCHIVE // LOOK 02
@@ -728,7 +822,31 @@ export function Hero() {
               margin: 0,
             }}
           >
-            CRAFTED IN <span style={{ fontFamily: "var(--font-serif-editorial)", fontStyle: "italic", color: "#A58A55" }}>DETAIL.</span>
+            <span style={{ display: "inline-block", overflow: "hidden", marginRight: "0.32em", paddingBottom: "0.1em" }}>
+              <span className="act2-word" style={{ display: "inline-block", willChange: "transform, opacity, filter", opacity: 0 }}>
+                CRAFTED
+              </span>
+            </span>
+            <span style={{ display: "inline-block", overflow: "hidden", marginRight: "0.32em", paddingBottom: "0.1em" }}>
+              <span className="act2-word" style={{ display: "inline-block", willChange: "transform, opacity, filter", opacity: 0 }}>
+                IN
+              </span>
+            </span>
+            <span style={{ display: "inline-block", overflow: "hidden", paddingBottom: "0.1em" }}>
+              <span
+                className="act2-word"
+                style={{
+                  display: "inline-block",
+                  fontFamily: "var(--font-serif-editorial)",
+                  fontStyle: "italic",
+                  color: "#A58A55",
+                  willChange: "transform, opacity, filter",
+                  opacity: 0,
+                }}
+              >
+                DETAIL.
+              </span>
+            </span>
           </h2>
         </div>
 
@@ -929,6 +1047,7 @@ export function Hero() {
       >
         <div style={{ maxWidth: "680px", paddingTop: "2.5rem", paddingBottom: "5rem" }}>
           <div
+            className="act3-tag"
             style={{
               display: "flex",
               alignItems: "center",
@@ -961,9 +1080,45 @@ export function Hero() {
               margin: 0,
             }}
           >
-            FORM. FIT. <br />
-            <span style={{ fontFamily: "var(--font-serif-editorial)", fontStyle: "italic", color: "#C9B07E" }}>
-              CHARACTER.
+            <span style={{ display: "inline-block", overflow: "hidden", marginRight: "0.28em", paddingBottom: "0.08em" }}>
+              <span
+                className="act3-word"
+                style={{
+                  display: "inline-block",
+                  willChange: "transform, opacity, filter",
+                  opacity: 0,
+                }}
+              >
+                FORM.
+              </span>
+            </span>
+            <span style={{ display: "inline-block", overflow: "hidden", marginRight: "0.28em", paddingBottom: "0.08em" }}>
+              <span
+                className="act3-word"
+                style={{
+                  display: "inline-block",
+                  willChange: "transform, opacity, filter",
+                  opacity: 0,
+                }}
+              >
+                FIT.
+              </span>
+            </span>
+            <br />
+            <span style={{ display: "inline-block", overflow: "hidden", paddingBottom: "0.08em" }}>
+              <span
+                className="act3-word"
+                style={{
+                  display: "inline-block",
+                  fontFamily: "var(--font-serif-editorial)",
+                  fontStyle: "italic",
+                  color: "#C9B07E",
+                  willChange: "transform, opacity, filter",
+                  opacity: 0,
+                }}
+              >
+                CHARACTER.
+              </span>
             </span>
           </h2>
 
@@ -979,10 +1134,34 @@ export function Hero() {
               marginBottom: 0,
             }}
           >
-            Fine-gauge Mongolian cashmere paired with razor-sharp wool pleats. A seamless dialogue between soft comfort and commanding form.
+            {"Fine-gauge Mongolian cashmere paired with razor-sharp wool pleats. A seamless dialogue between soft comfort and commanding form."
+              .split(" ")
+              .map((word, i) => (
+                <span
+                  key={i}
+                  style={{
+                    display: "inline-block",
+                    overflow: "hidden",
+                    marginRight: "0.28em",
+                    verticalAlign: "bottom",
+                  }}
+                >
+                  <span
+                    className="act3-para-word"
+                    style={{
+                      display: "inline-block",
+                      willChange: "transform, opacity, filter",
+                      opacity: 0,
+                    }}
+                  >
+                    {word}
+                  </span>
+                </span>
+              ))}
           </p>
 
           <div
+            className="act3-footer"
             style={{
               marginTop: "2rem",
               display: "flex",
